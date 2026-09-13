@@ -5,7 +5,7 @@ st.set_page_config(
 )
 
 # ------------------------------------------------------------------------------
-# 모바일 세로모드에서도 강제로 컬럼(8열)을 유지시키는 CSS
+# 모바일 세로모드에서도 가로 2열(2칸)을 예쁘게 유지하고 크기를 줄이는 CSS
 # ------------------------------------------------------------------------------
 st.markdown(
     """
@@ -56,8 +56,8 @@ def restart():
 # STEP 1: 이름 입력
 # ------------------------------------------------------------------------------
 if st.session_state.page == 1:
-    st.title("☀️ 좋은 아침이야!")
-    st.subheader("1단계: 너의 이름을 알려줘")
+    st.title("☀️ 좋은 아침!")
+    st.subheader("1단계: 이름을 말해주세요.")
 
     st.session_state.name = st.text_input(
         "이름을 입력하세요:",
@@ -78,7 +78,7 @@ if st.session_state.page == 1:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 2:
     st.title(f"👋 안녕, {st.session_state.name}아!")
-    st.subheader(f"2단계: 오늘 {st.session_state.name}의 기분은 10점 만점에 몇 점이야?")
+    st.subheader(f"2단계: 오늘 {st.session_state.name}의 기분은 10점 만점에 몇 점인가요?")
 
     st.session_state.score = st.slider(
         "슬라이더를 움직여서 점수를 골라보세요!",
@@ -101,7 +101,7 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (8열 구성: 1~4열 긍정, 5~8열 부정)
+# STEP 3: 기분 단어 선택 (가로 2칸: 왼쪽 긍정, 오른쪽 부정)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
@@ -124,34 +124,32 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    # 8열 그리드 생성 (1~4열: 긍정, 5~8열: 부정)
-    num_rows = max((len(pos_list) + 3) // 4, (len(neg_list) + 3) // 4)
+    # 총 30줄(행)을 생성하여 왼쪽(긍정)/오른쪽(부정) 배치
+    max_rows = max(len(pos_list), len(neg_list))
 
-    for r in range(num_rows):
-        cols = st.columns(8)
+    for i in range(max_rows):
+        col1, col2 = st.columns(2)  # 가로 2칸(2열) 생성
         
-        # 1~4열: 긍정 감정
-        for c in range(4):
-            idx = r * 4 + c
-            if idx < len(pos_list):
-                word = pos_list[idx]
+        # 1번째 칸: 긍정 감정 단어
+        with col1:
+            if i < len(pos_list):
+                word = pos_list[i]
                 is_selected = word in st.session_state.selected_feelings
                 label = f"✅{word}" if is_selected else word
-                if cols[c].button(label, key=f"btn_p_{idx}_{word}", use_container_width=True):
+                if st.button(label, key=f"btn_p_{i}_{word}", use_container_width=True):
                     if is_selected:
                         st.session_state.selected_feelings.remove(word)
                     else:
                         st.session_state.selected_feelings.append(word)
                     st.rerun()
 
-        # 5~8열: 부정 감정
-        for c in range(4):
-            idx = r * 4 + c
-            if idx < len(neg_list):
-                word = neg_list[idx]
+        # 2번째 칸: 부정 감정 단어
+        with col2:
+            if i < len(neg_list):
+                word = neg_list[i]
                 is_selected = word in st.session_state.selected_feelings
                 label = f"✅{word}" if is_selected else word
-                if cols[c + 4].button(label, key=f"btn_n_{idx}_{word}", use_container_width=True):
+                if st.button(label, key=f"btn_n_{i}_{word}", use_container_width=True):
                     if is_selected:
                         st.session_state.selected_feelings.remove(word)
                     else:
