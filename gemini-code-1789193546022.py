@@ -91,13 +91,13 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택
+# STEP 3: 기분 단어 선택 (파란색 선택 태그 & 무탈한 다중 선택)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 선택하기")
     st.subheader("3단계: 현재 기분에 알맞은 단어를 선택해 주세요 (다중 선택 가능)")
 
-    # 선택된 태그를 파란색으로 커스텀 스타일링
+    # 선택 태그 및 버튼을 확실하게 파란색(#1E88E5)으로 커스텀
     st.markdown(
         """
         
@@ -122,18 +122,20 @@ elif st.session_state.page == 3:
 
     col_p, col_n = st.columns(2)
     with col_p:
+        st.markdown("**긍정 감정**")
         selected_pos = st.multiselect(
-            "긍정 감정 (클릭하여 선택)",
+            "긍정 감정을 선택하세요",
             pos_list,
             default=[w for w in st.session_state.selected_feelings if w in pos_list],
-            placeholder="단어 선택..."
+            label_visibility="collapsed"
         )
     with col_n:
+        st.markdown("**부정 감정**")
         selected_neg = st.multiselect(
-            "부정 감정 (클릭하여 선택)",
+            "부정 감정을 선택하세요",
             neg_list,
             default=[w for w in st.session_state.selected_feelings if w in neg_list],
-            placeholder="단어 선택..."
+            label_visibility="collapsed"
         )
 
     st.session_state.selected_feelings = selected_pos + selected_neg
