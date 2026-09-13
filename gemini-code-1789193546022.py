@@ -5,6 +5,16 @@ st.set_page_config(
 )
 
 # ------------------------------------------------------------------------------
+# 모바일 세로모드에서도 강제로 컬럼(열)을 유지시키는 CSS
+# ------------------------------------------------------------------------------
+st.markdown(
+    """
+    
+    """,
+    unsafe_allow_html=True,
+)
+
+# ------------------------------------------------------------------------------
 # 세션 상태(Session State) 초기화
 # ------------------------------------------------------------------------------
 if "page" not in st.session_state:
@@ -91,57 +101,63 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (모바일 2열 정렬 & 긍정/부정 구분)
+# STEP 3: 기분 단어 선택 (8열 구성: 1~4열 긍정, 5~8열 부정)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
     st.subheader("3단계: 그 점수에 맞는 기분을 말로 표현해볼까? (여러 개 선택 가능)")
 
-    # 1. 긍정적인 감정 (2열 5행 배치)
-    st.markdown("### 😊 긍정적인 감정")
-    positive_feelings = [
-        ["가벼운", "상쾌한"],
-        ["가슴뭉클한", "생기가 도는"],
-        ["설레는", "감사한"],
-        ["신나는", "개운한"],
-        ["여유로운", "즐거운"]
+    # 긍정 감정 (30개)
+    pos_list = [
+        "가벼운", "상쾌한", "포근한", "행복한", "신나는", "감사한",
+        "개운한", "기대되는", "기운이 나는", "다정한", "든든한", "따뜻한",
+        "마음이 놓이는", "만족스러운", "명랑한", "반가운", "뿌듯한", "산뜻한",
+        "평화로운", "즐거운", "자랑스러운", "재미있는", "영광스러운", "여유로운",
+        "후련한", "흥미로운", "활기가 넘치는", "놀란", "궁금한", "느긋한"
     ]
 
-    for row in positive_feelings:
-        cols = st.columns(2)  # 모바일 세로모드에서도 2열 유지
-        for idx, word in enumerate(row):
-            is_selected = word in st.session_state.selected_feelings
-            label = f"✅ {word}" if is_selected else word
-            if cols[idx].button(label, key=f"btn_pos_{word}", use_container_width=True):
-                if is_selected:
-                    st.session_state.selected_feelings.remove(word)
-                else:
-                    st.session_state.selected_feelings.append(word)
-                st.rerun()
-
-    st.write("")  # 간격 조절
-
-    # 2. 부정적인 감정 (2열 5행 배치)
-    st.markdown("### 😢 부정적인 감정")
-    negative_feelings = [
-        ["갑갑한", "민망한"],
-        ["겁나는", "걱정스러운"],
-        ["불안한", "우울한"],
-        ["괴로운", "지루한"],
-        ["지친", "화나는"]
+    # 부정 감정 (22개)
+    neg_list = [
+        "갑갑한", "걱정스러운", "공허한", "괴로운", "귀찮은", "난감한",
+        "따분한", "막막한", "무기력한", "무서운", "민망한", "불편한",
+        "떨리는", "서운한", "섭섭한", "슬픈", "속상한", "심심한",
+        "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    for row in negative_feelings:
-        cols = st.columns(2)  # 모바일 세로모드에서도 2열 유지
-        for idx, word in enumerate(row):
-            is_selected = word in st.session_state.selected_feelings
-            label = f"✅ {word}" if is_selected else word
-            if cols[idx].button(label, key=f"btn_neg_{word}", use_container_width=True):
-                if is_selected:
-                    st.session_state.selected_feelings.remove(word)
-                else:
-                    st.session_state.selected_feelings.append(word)
-                st.rerun()
+    # 8열 그리드 데이터를 생성하는 로직 (1~4열: 긍정, 5~8열: 부정)
+    # 총 행 수 계산 (긍정 30개 / 4 = 8행 필요)
+    num_rows = max((len(pos_list) + 3) // 4, (len(neg_list) + 3) // 4)
+
+    for r in range(num_rows):
+        cols = st.columns(8)  # 모바일 세로모드에서도 유지되는 8열
+        
+        # 1~4열: 긍정 감정 배치
+        for c in range(4):
+            idx = r * 4 + c
+            if idx < len(pos_list):
+                word = pos_list[idx]
+                is_selected = word in st.session_state.selected_feelings
+                label = f"✅{word}" if is_selected else word
+                if cols[c].button(label, key=f"btn_p_{idx}_{word}", use_container_width=True):
+                    if is_selected:
+                        st.session_state.selected_feelings.remove(word)
+                    else:
+                        st.session_state.selected_feelings.append(word)
+                    st.rerun()
+
+        # 5~8열: 부정 감정 배치
+        for c in range(4):
+            idx = r * 4 + c
+            if idx < len(neg_list):
+                word = neg_list[idx]
+                is_selected = word in st.session_state.selected_feelings
+                label = f"✅{word}" if is_selected else word
+                if cols[c + 4].button(label, key=f"btn_n_{idx}_{word}", use_container_width=True):
+                    if is_selected:
+                        st.session_state.selected_feelings.remove(word)
+                    else:
+                        st.session_state.selected_feelings.append(word)
+                    st.rerun()
 
     st.divider()
     if st.session_state.selected_feelings:
@@ -169,7 +185,6 @@ elif st.session_state.page == 4:
     st.title("🌱 기분의 이유 알아보기")
     st.subheader("4단계: 그런 기분이 든 이유가 뭐야? (여러 개 선택 가능)")
 
-    # 모바일 환경을 고려하여 2열 형태로 구성
     reason_rows = [
         ["친구", "선생님"],
         ["부모님", "학업/공부/학원"],
@@ -193,10 +208,10 @@ elif st.session_state.page == 4:
         st.info(f"선택한 이유: **{', '.join(st.session_state.selected_reasons)}**")
 
     st.markdown("#### 4-1. 이유를 조금 더 자세히 적어볼까?")
-    st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 좋아! 편하게 지나쳐도 돼.")
+    st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 좋아! 바로 지나쳐도 돼.")
     
     st.session_state.reason_detail = st.text_area(
-        "어떤 일이 있었는지 마음 편하게 작성해줘:",
+        "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
         value=st.session_state.reason_detail,
         placeholder="예: 오늘 단어 시험이 있어서 긴장돼요 / 친구랑 맛있는 걸 먹기로 했어요",
     )
@@ -209,9 +224,8 @@ elif st.session_state.page == 4:
             st.rerun()
     with col2:
         if st.button("결과 보기 ✨", use_container_width=True):
-            # 주관식(reason_detail)은 입력을 검사하지 않으므로 바로 넘어갑니다.
             if not st.session_state.selected_reasons:
-                st.warning("최소 하나 이상의 이유 항목을 버튼으로 선택해줘!")
+                st.warning("최소 하나 이상의 이유 항목을 선택해줘!")
             else:
                 next_page()
                 st.rerun()
