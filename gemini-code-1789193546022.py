@@ -91,13 +91,13 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (파란색 선택 태그 & 무탈한 다중 선택)
+# STEP 3: 기분 단어 선택 (네모 버튼 펼침 + 파란색 강조 + 모바일 가로 2열 고정)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 선택하기")
     st.subheader("3단계: 현재 기분에 알맞은 단어를 선택해 주세요 (다중 선택 가능)")
 
-    # 선택 태그 및 버튼을 확실하게 파란색(#1E88E5)으로 커스텀
+    # 모바일 세로모드에서도 가로 2열 고정 및 버튼 스타일 커스텀
     st.markdown(
         """
         
@@ -120,25 +120,47 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    col_p, col_n = st.columns(2)
-    with col_p:
-        st.markdown("**긍정 감정**")
-        selected_pos = st.multiselect(
-            "긍정 감정을 선택하세요",
-            pos_list,
-            default=[w for w in st.session_state.selected_feelings if w in pos_list],
-            label_visibility="collapsed"
-        )
-    with col_n:
-        st.markdown("**부정 감정**")
-        selected_neg = st.multiselect(
-            "부정 감정을 선택하세요",
-            neg_list,
-            default=[w for w in st.session_state.selected_feelings if w in neg_list],
-            label_visibility="collapsed"
-        )
+    # 상단 2열 타이틀 표시
+    col_t1, col_t2 = st.columns(2)
+    with col_t1:
+        st.markdown("### 🔵 긍정 감정")
+    with col_t2:
+        st.markdown("### 🔴 부정 감정")
 
-    st.session_state.selected_feelings = selected_pos + selected_neg
+    max_rows = max(len(pos_list), len(neg_list))
+
+    for i in range(max_rows):
+        col1, col2 = st.columns(2)
+        
+        # 1번째 칸 (왼쪽): 긍정 감정 버튼
+        with col1:
+            if i < len(pos_list):
+                word = pos_list[i]
+                is_selected = word in st.session_state.selected_feelings
+                label = f"✓ {word}" if is_selected else word
+                btn_type = "primary" if is_selected else "secondary"
+                
+                if st.button(label, key=f"btn_p_{i}_{word}", type=btn_type, use_container_width=True):
+                    if is_selected:
+                        st.session_state.selected_feelings.remove(word)
+                    else:
+                        st.session_state.selected_feelings.append(word)
+                    st.rerun()
+
+        # 2번째 칸 (오른쪽): 부정 감정 버튼
+        with col2:
+            if i < len(neg_list):
+                word = neg_list[i]
+                is_selected = word in st.session_state.selected_feelings
+                label = f"✓ {word}" if is_selected else word
+                btn_type = "primary" if is_selected else "secondary"
+                
+                if st.button(label, key=f"btn_n_{i}_{word}", type=btn_type, use_container_width=True):
+                    if is_selected:
+                        st.session_state.selected_feelings.remove(word)
+                    else:
+                        st.session_state.selected_feelings.append(word)
+                    st.rerun()
 
     st.divider()
     if st.session_state.selected_feelings:
@@ -177,8 +199,9 @@ elif st.session_state.page == 4:
         for idx, reason_item in enumerate(row):
             is_selected = reason_item in st.session_state.selected_reasons
             label = f"✅ {reason_item}" if is_selected else reason_item
+            btn_type = "primary" if is_selected else "secondary"
             
-            if cols[idx].button(label, key=f"r_btn_{reason_item}", use_container_width=True):
+            if cols[idx].button(label, key=f"r_btn_{reason_item}", type=btn_type, use_container_width=True):
                 if is_selected:
                     st.session_state.selected_reasons.remove(reason_item)
                 else:
