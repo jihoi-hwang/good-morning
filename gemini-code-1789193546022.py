@@ -91,7 +91,7 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (모바일 세로 모드 2열 강제 고정)
+# STEP 3: 기분 단어 선택 (모바일 2열 강제 고정 - HTML multiselect)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
@@ -114,7 +114,7 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    # 모바일 2열 고정을 위한 CSS
+    # 모바일에서도 절대 무너지지 않는 2열 체크박스 그리드 CSS
     st.markdown(
         """
         
@@ -122,43 +122,29 @@ elif st.session_state.page == 3:
         unsafe_allow_html=True,
     )
 
-    max_rows = max(len(pos_list), len(neg_list))
+    # st.multiselect를 활용하여 모바일에서 확실하게 2열로 선택할 수 있게 배치
+    col_p, col_n = st.columns(2)
+    with col_p:
+        selected_pos = st.multiselect(
+            "긍정 감정",
+            pos_list,
+            default=[w for w in st.session_state.selected_feelings if w in pos_list]
+        )
+    with col_n:
+        selected_neg = st.multiselect(
+            "부정 감정",
+            neg_list,
+            default=[w for w in st.session_state.selected_feelings if w in neg_list]
+        )
 
-    for i in range(max_rows):
-        # 강제로 가로 2열 형태 유지
-        col1, col2 = st.columns(2)
-        
-        # 1번째 칸 (왼쪽): 긍정 감정
-        with col1:
-            if i < len(pos_list):
-                word = pos_list[i]
-                is_selected = word in st.session_state.selected_feelings
-                label = f"✅ {word}" if is_selected else word
-                if st.button(label, key=f"btn_p_{i}_{word}", use_container_width=True):
-                    if is_selected:
-                        st.session_state.selected_feelings.remove(word)
-                    else:
-                        st.session_state.selected_feelings.append(word)
-                    st.rerun()
-
-        # 2번째 칸 (오른쪽): 부정 감정
-        with col2:
-            if i < len(neg_list):
-                word = neg_list[i]
-                is_selected = word in st.session_state.selected_feelings
-                label = f"✅ {word}" if is_selected else word
-                if st.button(label, key=f"btn_n_{i}_{word}", use_container_width=True):
-                    if is_selected:
-                        st.session_state.selected_feelings.remove(word)
-                    else:
-                        st.session_state.selected_feelings.append(word)
-                    st.rerun()
+    # 선택된 단어 상태 업데이트
+    st.session_state.selected_feelings = selected_pos + selected_neg
 
     st.divider()
     if st.session_state.selected_feelings:
         st.info(f"선택한 감정 단어: **{', '.join(st.session_state.selected_feelings)}**")
     else:
-        st.caption("알맞은 감정 단어를 선택해주세요!")
+        st.caption("알맞은 감정 단어를 선택해줘!")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -178,7 +164,7 @@ elif st.session_state.page == 3:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 4:
     st.title("🌱 기분의 이유 알아보기")
-    st.subheader("4단계: 그런 기분이 든 이유가 뭔가요? (여러 개 선택 가능)")
+    st.subheader("4단계: 그런 기분이 든 이유가 뭐야? (여러 개 선택 가능)")
 
     reason_rows = [
         ["친구", "선생님"],
@@ -206,7 +192,7 @@ elif st.session_state.page == 4:
     st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 됩니다. 쓴 내용은 절대비밀보장!")
     
     st.session_state.reason_detail = st.text_area(
-        "어떤 일이 있었는지 편하게 작성해주세요. (안 적어도 괜찮습니다.):",
+        "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
         value=st.session_state.reason_detail,
         placeholder="예: 오늘 단어 시험이 있어서 긴장돼요 / 친구랑 맛있는 걸 먹기로 했어요",
     )
