@@ -183,7 +183,7 @@ elif st.session_state.page == 3:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 4:
     st.title("🌱 기분의 이유 알아보기")
-    st.subheader("4단계: 그런 기분이 든 이유가 뭐야? (여러 개 선택 가능)")
+    st.subheader("4단계: 그런 기분이 든 이유가 무엇인가요? (여러 개 선택 가능)")
 
     reason_rows = [
         ["친구", "선생님"],
@@ -211,7 +211,7 @@ elif st.session_state.page == 4:
     st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 됩니다. 쓴 내용은 절대비밀보장!")
     
     st.session_state.reason_detail = st.text_area(
-        "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
+        "어떤 일이 있었는지 마음 편하게 작성해봅시다. (안 적어도 괜찮습니다.):",
         value=st.session_state.reason_detail,
         placeholder="예: 오늘 단어 시험이 있어서 긴장돼요 / 친구랑 맛있는 걸 먹기로 했어요",
     )
