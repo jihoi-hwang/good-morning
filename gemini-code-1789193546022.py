@@ -62,7 +62,7 @@ if st.session_state.page == 1:
     st.session_state.name = st.text_input(
         "이름을 입력하세요:",
         value=st.session_state.name,
-        placeholder="예: 홍길동",
+        placeholder="예: 길동이",
     )
 
     st.divider()
@@ -78,10 +78,10 @@ if st.session_state.page == 1:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 2:
     st.title(f"👋 안녕, {st.session_state.name}아!")
-    st.subheader("2단계: 오늘 너의 기분은 10점 만점에 몇 점이야?")
+    st.subheader("2단계: 오늘 {name}의 기분은 10점 만점에 몇 점이야?")
 
     st.session_state.score = st.slider(
-        "슬라이더를 움직여서 점수를 골라봐!",
+        "슬라이더를 움직여서 점수를 골라보세요!",
         min_value=1,
         max_value=10,
         value=st.session_state.score,
@@ -105,7 +105,7 @@ elif st.session_state.page == 2:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
-    st.subheader("3단계: 그 점수에 맞는 기분을 말로 표현해볼까? (여러 개 선택 가능)")
+    st.subheader("3단계: 그 점수에 맞는 기분을 말로 표현해봅시다! (여러 개 선택 가능)")
 
     # 긍정 감정 (30개)
     pos_list = [
@@ -207,8 +207,8 @@ elif st.session_state.page == 4:
     if st.session_state.selected_reasons:
         st.info(f"선택한 이유: **{', '.join(st.session_state.selected_reasons)}**")
 
-    st.markdown("#### 4-1. 이유를 조금 더 자세히 적어볼까?")
-    st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 좋아! 바로 지나쳐도 돼.")
+    st.markdown("#### 4-1. 이유를 조금 더 자세히 적어봅시다.")
+    st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 됩니다. 쓴 내용은 절대비밀보장!")
     
     st.session_state.reason_detail = st.text_area(
         "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
@@ -225,7 +225,7 @@ elif st.session_state.page == 4:
     with col2:
         if st.button("결과 보기 ✨", use_container_width=True):
             if not st.session_state.selected_reasons:
-                st.warning("최소 하나 이상의 이유 항목을 선택해줘!")
+                st.warning("최소 하나 이상의 이유 항목을 선택해주세요!")
             else:
                 next_page()
                 st.rerun()
