@@ -5,7 +5,7 @@ st.set_page_config(
 )
 
 # ------------------------------------------------------------------------------
-# 모바일 세로모드에서도 강제로 컬럼(열)을 유지시키는 CSS
+# 모바일 세로모드에서도 강제로 컬럼(8열)을 유지시키는 CSS
 # ------------------------------------------------------------------------------
 st.markdown(
     """
@@ -78,7 +78,7 @@ if st.session_state.page == 1:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 2:
     st.title(f"👋 안녕, {st.session_state.name}아!")
-    st.subheader("2단계: 오늘 {name}의 기분은 10점 만점에 몇 점이야?")
+    st.subheader(f"2단계: 오늘 {st.session_state.name}의 기분은 10점 만점에 몇 점이야?")
 
     st.session_state.score = st.slider(
         "슬라이더를 움직여서 점수를 골라보세요!",
@@ -124,14 +124,13 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    # 8열 그리드 데이터를 생성하는 로직 (1~4열: 긍정, 5~8열: 부정)
-    # 총 행 수 계산 (긍정 30개 / 4 = 8행 필요)
+    # 8열 그리드 생성 (1~4열: 긍정, 5~8열: 부정)
     num_rows = max((len(pos_list) + 3) // 4, (len(neg_list) + 3) // 4)
 
     for r in range(num_rows):
-        cols = st.columns(8)  # 모바일 세로모드에서도 유지되는 8열
+        cols = st.columns(8)
         
-        # 1~4열: 긍정 감정 배치
+        # 1~4열: 긍정 감정
         for c in range(4):
             idx = r * 4 + c
             if idx < len(pos_list):
@@ -145,7 +144,7 @@ elif st.session_state.page == 3:
                         st.session_state.selected_feelings.append(word)
                     st.rerun()
 
-        # 5~8열: 부정 감정 배치
+        # 5~8열: 부정 감정
         for c in range(4):
             idx = r * 4 + c
             if idx < len(neg_list):
@@ -183,7 +182,7 @@ elif st.session_state.page == 3:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 4:
     st.title("🌱 기분의 이유 알아보기")
-    st.subheader("4단계: 그런 기분이 든 이유가 무엇인가요? (여러 개 선택 가능)")
+    st.subheader("4단계: 그런 기분이 든 이유가 뭐야? (여러 개 선택 가능)")
 
     reason_rows = [
         ["친구", "선생님"],
@@ -211,7 +210,7 @@ elif st.session_state.page == 4:
     st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 됩니다. 쓴 내용은 절대비밀보장!")
     
     st.session_state.reason_detail = st.text_area(
-        "어떤 일이 있었는지 마음 편하게 작성해봅시다. (안 적어도 괜찮습니다.):",
+        "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
         value=st.session_state.reason_detail,
         placeholder="예: 오늘 단어 시험이 있어서 긴장돼요 / 친구랑 맛있는 걸 먹기로 했어요",
     )
