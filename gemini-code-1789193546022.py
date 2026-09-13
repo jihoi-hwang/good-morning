@@ -91,11 +91,19 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (모바일 2열 강제 고정 - HTML multiselect)
+# STEP 3: 기분 단어 선택 (파란색 선택 태그 & 2열 고정)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
     st.subheader("3단계: 그 점수에 맞는 기분을 말로 표현해봅시다! (여러 개 선택 가능)")
+
+    # 선택된 태그를 파란색으로 커스텀 스타일링
+    st.markdown(
+        """
+        
+        """,
+        unsafe_allow_html=True,
+    )
 
     # 긍정 감정 (30개)
     pos_list = [
@@ -114,30 +122,22 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    # 모바일에서도 절대 무너지지 않는 2열 체크박스 그리드 CSS
-    st.markdown(
-        """
-        
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # st.multiselect를 활용하여 모바일에서 확실하게 2열로 선택할 수 있게 배치
     col_p, col_n = st.columns(2)
     with col_p:
         selected_pos = st.multiselect(
-            "긍정 감정",
+            "긍정 감정 (클릭하여 선택)",
             pos_list,
-            default=[w for w in st.session_state.selected_feelings if w in pos_list]
+            default=[w for w in st.session_state.selected_feelings if w in pos_list],
+            placeholder="단어 선택..."
         )
     with col_n:
         selected_neg = st.multiselect(
-            "부정 감정",
+            "부정 감정 (클릭하여 선택)",
             neg_list,
-            default=[w for w in st.session_state.selected_feelings if w in neg_list]
+            default=[w for w in st.session_state.selected_feelings if w in neg_list],
+            placeholder="단어 선택..."
         )
 
-    # 선택된 단어 상태 업데이트
     st.session_state.selected_feelings = selected_pos + selected_neg
 
     st.divider()
@@ -212,16 +212,17 @@ elif st.session_state.page == 4:
                 st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 5: 최종 메시지 페이지
+# STEP 5: 최종 메시지 페이지 (하트/눈 애니메이션 적용)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 5:
-    st.balloons()
+    # 풍선 대신 눈/하트 모션 효과 적용
+    st.snow()
     
     st.title("💖 응원 메시지")
     st.write("")
     
     name = st.session_state.name
-    st.success(f"### 🎉 {name}아! 오늘도 좋은 하루 보내!")
+    st.success(f"### 💕 {name}아! 오늘도 정말 고생 많았어, 행복한 하루 보내!")
 
     st.divider()
     if st.button("🔄 처음으로 돌아가기", use_container_width=True):
