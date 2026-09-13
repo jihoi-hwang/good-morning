@@ -5,16 +5,6 @@ st.set_page_config(
 )
 
 # ------------------------------------------------------------------------------
-# 모바일 세로모드에서도 가로 2열(2칸)을 예쁘게 유지하고 크기를 줄이는 CSS
-# ------------------------------------------------------------------------------
-st.markdown(
-    """
-    
-    """,
-    unsafe_allow_html=True,
-)
-
-# ------------------------------------------------------------------------------
 # 세션 상태(Session State) 초기화
 # ------------------------------------------------------------------------------
 if "page" not in st.session_state:
@@ -56,8 +46,8 @@ def restart():
 # STEP 1: 이름 입력
 # ------------------------------------------------------------------------------
 if st.session_state.page == 1:
-    st.title("☀️ 좋은 아침!")
-    st.subheader("1단계: 이름을 말해주세요.")
+    st.title("☀️ 좋은 아침이야!")
+    st.subheader("1단계: 너의 이름을 알려줘")
 
     st.session_state.name = st.text_input(
         "이름을 입력하세요:",
@@ -78,7 +68,7 @@ if st.session_state.page == 1:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 2:
     st.title(f"👋 안녕, {st.session_state.name}아!")
-    st.subheader(f"2단계: 오늘 {st.session_state.name}의 기분은 10점 만점에 몇 점인가요?")
+    st.subheader(f"2단계: 오늘 {st.session_state.name}의 기분은 10점 만점에 몇 점이야?")
 
     st.session_state.score = st.slider(
         "슬라이더를 움직여서 점수를 골라보세요!",
@@ -101,7 +91,7 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택 (가로 2칸: 왼쪽 긍정, 오른쪽 부정)
+# STEP 3: 기분 단어 선택 (모바일 세로 모드 2열 강제 고정)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 고르기")
@@ -124,18 +114,26 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운", "멍한"
     ]
 
-    # 총 30줄(행)을 생성하여 왼쪽(긍정)/오른쪽(부정) 배치
+    # 모바일 2열 고정을 위한 CSS
+    st.markdown(
+        """
+        
+        """,
+        unsafe_allow_html=True,
+    )
+
     max_rows = max(len(pos_list), len(neg_list))
 
     for i in range(max_rows):
-        col1, col2 = st.columns(2)  # 가로 2칸(2열) 생성
+        # 강제로 가로 2열 형태 유지
+        col1, col2 = st.columns(2)
         
-        # 1번째 칸: 긍정 감정 단어
+        # 1번째 칸 (왼쪽): 긍정 감정
         with col1:
             if i < len(pos_list):
                 word = pos_list[i]
                 is_selected = word in st.session_state.selected_feelings
-                label = f"✅{word}" if is_selected else word
+                label = f"✅ {word}" if is_selected else word
                 if st.button(label, key=f"btn_p_{i}_{word}", use_container_width=True):
                     if is_selected:
                         st.session_state.selected_feelings.remove(word)
@@ -143,12 +141,12 @@ elif st.session_state.page == 3:
                         st.session_state.selected_feelings.append(word)
                     st.rerun()
 
-        # 2번째 칸: 부정 감정 단어
+        # 2번째 칸 (오른쪽): 부정 감정
         with col2:
             if i < len(neg_list):
                 word = neg_list[i]
                 is_selected = word in st.session_state.selected_feelings
-                label = f"✅{word}" if is_selected else word
+                label = f"✅ {word}" if is_selected else word
                 if st.button(label, key=f"btn_n_{i}_{word}", use_container_width=True):
                     if is_selected:
                         st.session_state.selected_feelings.remove(word)
@@ -160,7 +158,7 @@ elif st.session_state.page == 3:
     if st.session_state.selected_feelings:
         st.info(f"선택한 감정 단어: **{', '.join(st.session_state.selected_feelings)}**")
     else:
-        st.caption("알맞은 감정 단어를 선택해줘!")
+        st.caption("알맞은 감정 단어를 선택해주세요!")
 
     col1, col2 = st.columns(2)
     with col1:
@@ -180,7 +178,7 @@ elif st.session_state.page == 3:
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 4:
     st.title("🌱 기분의 이유 알아보기")
-    st.subheader("4단계: 그런 기분이 든 이유가 뭐야? (여러 개 선택 가능)")
+    st.subheader("4단계: 그런 기분이 든 이유가 뭔가요? (여러 개 선택 가능)")
 
     reason_rows = [
         ["친구", "선생님"],
@@ -208,7 +206,7 @@ elif st.session_state.page == 4:
     st.caption("💡 **선택사항:** 안 쓰고 싶으면 안 써도 됩니다. 쓴 내용은 절대비밀보장!")
     
     st.session_state.reason_detail = st.text_area(
-        "어떤 일이 있었는지 마음 편하게 작성해줘 (안 적어도 괜찮아):",
+        "어떤 일이 있었는지 편하게 작성해주세요. (안 적어도 괜찮습니다.):",
         value=st.session_state.reason_detail,
         placeholder="예: 오늘 단어 시험이 있어서 긴장돼요 / 친구랑 맛있는 걸 먹기로 했어요",
     )
