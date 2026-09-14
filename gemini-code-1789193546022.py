@@ -233,7 +233,7 @@ elif st.session_state.page == 5:
     st.snow()
     
     # 구글 앱스 스크립트 웹앱 주소로 데이터 전송
-    if not st.session_state.is_saved:
+    if not st.session_state.is_saved:https://script.google.com/macros/s/AKfycbzlIWTuM17uzdg-1GUVJy2O4WpwxXXd3aiF6DAAudO2D1CmKg8VL4p-ucxmFVZ6dCgK/exec
         try:
             payload = {
                 "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
