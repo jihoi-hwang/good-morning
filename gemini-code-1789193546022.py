@@ -103,19 +103,12 @@ elif st.session_state.page == 2:
             st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 3: 기분 단어 선택
+# STEP 3: 기분 단어 선택 (1줄 세로 배열 & 구분 적용)
 # ------------------------------------------------------------------------------
 elif st.session_state.page == 3:
     st.title("💭 기분 단어 선택하기")
     st.subheader("3단계: 현재 기분에 알맞은 단어를 선택해 주세요 (다중 선택 가능)")
 
-    st.markdown(
-        """
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # 쉼표(,) 누락 부분 수정 완료
     pos_list = [
         "상쾌한", "포근한", "행복한", "신나는", "감사한", "후련한", "놀란",
         "개운한", "기대되는", "기운이 나는", "다정한", "든든한", "따뜻한",
@@ -130,45 +123,36 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운"
     ]
 
-    # 미완성 따옴표 구문 수정 완료
-    col_t1, col_t2 = st.columns(2)
-    with col_t1:
-        st.markdown("### 🔵 긍정 감정")
-    with col_t2:
-        st.markdown("### 🔴 부정 감정")
-
-    max_rows = max(len(pos_list), len(neg_list))
-
-    for i in range(max_rows):
-        col1, col2 = st.columns(2)
+    # 1. 긍정 감정 단어 목록 (위쪽 배치)
+    for i, word in enumerate(pos_list):
+        is_selected = word in st.session_state.selected_feelings
+        label = f"✓ {word}" if is_selected else word
+        btn_type = "primary" if is_selected else "secondary"
         
-        with col1:
-            if i < len(pos_list):
-                word = pos_list[i]
-                is_selected = word in st.session_state.selected_feelings
-                label = f"✓ {word}" if is_selected else word
-                btn_type = "primary" if is_selected else "secondary"
-                
-                if st.button(label, key=f"btn_p_{i}_{word}", type=btn_type, use_container_width=True):
-                    if is_selected:
-                        st.session_state.selected_feelings.remove(word)
-                    else:
-                        st.session_state.selected_feelings.append(word)
-                    st.rerun()
+        if st.button(label, key=f"btn_p_{i}_{word}", type=btn_type, use_container_width=True):
+            if is_selected:
+                st.session_state.selected_feelings.remove(word)
+            else:
+                st.session_state.selected_feelings.append(word)
+            st.rerun()
 
-        with col2:
-            if i < len(neg_list):
-                word = neg_list[i]
-                is_selected = word in st.session_state.selected_feelings
-                label = f"✓ {word}" if is_selected else word
-                btn_type = "primary" if is_selected else "secondary"
-                
-                if st.button(label, key=f"btn_n_{i}_{word}", type=btn_type, use_container_width=True):
-                    if is_selected:
-                        st.session_state.selected_feelings.remove(word)
-                    else:
-                        st.session_state.selected_feelings.append(word)
-                    st.rerun()
+    # 긍정과 부정 단어 사이 약간의 텀(여백 및 경계선)
+    st.write("")
+    st.markdown("---")
+    st.write("")
+
+    # 2. 부정 감정 단어 목록 (아래쪽 배치)
+    for i, word in enumerate(neg_list):
+        is_selected = word in st.session_state.selected_feelings
+        label = f"✓ {word}" if is_selected else word
+        btn_type = "primary" if is_selected else "secondary"
+        
+        if st.button(label, key=f"btn_n_{i}_{word}", type=btn_type, use_container_width=True):
+            if is_selected:
+                st.session_state.selected_feelings.remove(word)
+            else:
+                st.session_state.selected_feelings.append(word)
+            st.rerun()
 
     st.divider()
     if st.session_state.selected_feelings:
