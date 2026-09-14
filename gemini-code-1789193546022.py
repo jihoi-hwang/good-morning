@@ -7,7 +7,7 @@ st.set_page_config(
 )
 
 # ==============================================================================
-# 🎯 구글 앱스 스크립트(GAS) 웹앱 URL (새 주소 반영)
+# 🎯 구글 앱스 스크립트(GAS) 웹앱 URL
 # ==============================================================================
 GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyJ31BFdk6qLu5usdlxRiqKCQOWC0NFYyNAuETS8I07349yhSneSpDfBghGARBY-8lw6g/exec"
 # ==============================================================================
@@ -123,7 +123,7 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운"
     ]
 
-    # 1. 긍정 감정 단어 목록 (위쪽 배치)
+    # 긍정 감정 단어 목록
     for i, word in enumerate(pos_list):
         is_selected = word in st.session_state.selected_feelings
         label = f"✓ {word}" if is_selected else word
@@ -136,12 +136,11 @@ elif st.session_state.page == 3:
                 st.session_state.selected_feelings.append(word)
             st.rerun()
 
-    # 긍정과 부정 단어 사이 약간의 텀(여백 및 경계선)
     st.write("")
     st.markdown("---")
     st.write("")
 
-    # 2. 부정 감정 단어 목록 (아래쪽 배치)
+    # 부정 감정 단어 목록
     for i, word in enumerate(neg_list):
         is_selected = word in st.session_state.selected_feelings
         label = f"✓ {word}" if is_selected else word
@@ -227,26 +226,29 @@ elif st.session_state.page == 4:
                 st.rerun()
 
 # ------------------------------------------------------------------------------
-# STEP 5 부분의 데이터 전송 로직
-if not st.session_state.is_saved:
-    try:
-        payload = {
-            "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "name": st.session_state.name,
-            "score": st.session_state.score,
-            "feelings": ", ".join(st.session_state.selected_feelings),
-            "reasons": ", ".join(st.session_state.selected_reasons),
-            "detail": st.session_state.reason_detail,
-        }
-        
-        # headers와 allow_redirects 옵션 추가
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(GAS_WEBAPP_URL, json=payload, headers=headers, allow_redirects=True)
-        
-        if response.status_code == 200:
-            st.session_state.is_saved = True
-    except Exception as e:
-        st.error(f"구글 시트 저장 실패: {e}")
+# STEP 5: 최종 메시지 및 구글 시트 저장
+# ------------------------------------------------------------------------------
+elif st.session_state.page == 5:
+    st.snow()
+    
+    if not st.session_state.is_saved:
+        try:
+            payload = {
+                "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "name": st.session_state.name,
+                "score": st.session_state.score,
+                "feelings": ", ".join(st.session_state.selected_feelings),
+                "reasons": ", ".join(st.session_state.selected_reasons),
+                "detail": st.session_state.reason_detail,
+            }
+            
+            headers = {"Content-Type": "application/json"}
+            response = requests.post(GAS_WEBAPP_URL, json=payload, headers=headers, allow_redirects=True)
+            
+            if response.status_code == 200:
+                st.session_state.is_saved = True
+        except Exception as e:
+            st.error(f"구글 시트 저장 실패: {e}")
 
     st.title("💖 응원 메시지")
     st.write("")
