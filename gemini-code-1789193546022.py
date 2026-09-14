@@ -111,17 +111,16 @@ elif st.session_state.page == 3:
 
     st.markdown(
         """
-        
         """,
         unsafe_allow_html=True,
     )
 
+    # 쉼표(,) 누락 부분 수정 완료
     pos_list = [
-      "상쾌한", "포근한", "행복한", "신나는", "감사한", "후련한", "놀란"
+        "상쾌한", "포근한", "행복한", "신나는", "감사한", "후련한", "놀란",
         "개운한", "기대되는", "기운이 나는", "다정한", "든든한", "따뜻한",
-        "마음이 놓이는", "만족스러운", "반가운", "뿌듯한", "흥미로운"
+        "마음이 놓이는", "만족스러운", "반가운", "뿌듯한", "흥미로운",
         "평화로운", "즐거운", "자랑스러운", "재미있는", "여유로운"
-    
     ]
 
     neg_list = [
@@ -131,11 +130,12 @@ elif st.session_state.page == 3:
         "쓸쓸한", "억울한", "아쉬운"
     ]
 
+    # 미완성 따옴표 구문 수정 완료
     col_t1, col_t2 = st.columns(2)
     with col_t1:
-        st.markdown("### )
+        st.markdown("### 🔵 긍정 감정")
     with col_t2:
-        st.markdown("### )
+        st.markdown("### 🔴 부정 감정")
 
     max_rows = max(len(pos_list), len(neg_list))
 
